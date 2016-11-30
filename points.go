@@ -5,24 +5,20 @@ import "fmt"
 type Users struct {
 }
 
-var housePoints = map[string]int{
-	"Slytherin":  0,
-	"Gryffindor": 0,
-	"Hufflepuff": 0,
-	"Ravenclaw":  0,
-}
-
 type HousePoint struct {
 	House     string `json:"house"`
 	NumPoints string `json:"num_points"`
 }
 
 func addPoints(userId string, guildID string, house string) {
-	if _, ok := housePoints[house]; !ok {
-		fmt.Printf("%s isn't a house\n", house)
+	houseMap := GetHouseMap()
+	if _, ok := houseMap[house]; !ok {
+		log.WithFields(log.Fields{
+			"house": house,
+		}).Warn("Invalid house")
 		return
 	}
-	db := getDB()
+	db := GetDB()
 
 	_, err := db.Exec(`INSERT INTO users (user_id, guild_id, house, num_points) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE num_points = num_points + 10, house = ?`, userId, guildID, house, 10, house)
 	if err != nil {
@@ -39,7 +35,7 @@ func getPointsForUser(userId string, guildID string) {
 }
 
 func getHouseStandings(guildID string) []HousePoint {
-	db := getDB()
+	db := GetDB()
 
 	housePoints := make([]HousePoint, 0)
 

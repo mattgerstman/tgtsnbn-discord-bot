@@ -9,7 +9,7 @@ import (
 
 var db *sql.DB
 
-func getDB() *sql.DB {
+func GetDB() *sql.DB {
 	if db != nil {
 		return db
 	}

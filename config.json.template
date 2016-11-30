@@ -1,0 +1,10 @@
+{
+	"username": "",
+	"password" : "",
+	"houses": {
+		"Slytherin":  true,
+		"Gryffindor": true,
+		"Hufflepuff": true,
+		"Ravenclaw":  true,
+	}
+}

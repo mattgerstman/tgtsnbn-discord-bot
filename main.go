@@ -1,19 +1,24 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/mattgerstman/discordgo"
 )
 
 func main() {
-	fmt.Println("Hello Harry Potter")
-	discord, err := discordgo.New("mattgerstman@gmail.com", "DbGt22440739")
-	fmt.Println(err)
+	log.Info("Hello Harry Potter")
+	GetDB()
+	config := GetConfig()
 
-	getDB()
+	discord, err := discordgo.New(config.Username, config.Password)
+	if err != nil {
+		log.Fatal("Failed to connect to discord", err)
+	}
 
 	header := http.Header{}
 	header.Add("accept-encoding", "zlib")
@@ -26,18 +31,17 @@ func main() {
 	// Open the websocket and begin listening.
 	err = discord.Open()
 	if err != nil {
-		fmt.Println("Error opening Discord session: ", err)
-	} else {
-
-		fmt.Println("HPBot is now running.  Press CTRL-C to exit.")
-		// Simple way to keep program running until CTRL-C is pressed.
-		<-make(chan struct{})
+		log.Fatal("Error opening Discord session: ", err)
 	}
+
+	// Simple way to keep program running until CTRL-C is pressed.
+	<-make(chan struct{})
+
 }
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
 	// Set the playing status.
-	fmt.Println(s)
+	log.Info("HPBot is now running. Press CTRL-C to exit.")
 }
 
 type GuildRoles map[string]string
@@ -65,17 +69,23 @@ func getRoleName(s *discordgo.Session, roleId string, guildID string) (string, e
 	return rolesMap[guildID][roleId], nil
 }
 
-func getHouseForMember(s *discordgo.Session, member *discordgo.Member, guildID string) string {
+func getHouseForMember(s *discordgo.Session, member *discordgo.Member, guildID string) (string, error) {
 	for _, role := range member.Roles {
-		fmt.Printf("role: %s", role)
-		fmt.Printf("GuildID: %s", guildID)
-		role, _ := getRoleName(s, role, guildID)
-		fmt.Println(role)
+		log.WithFields(log.Fields{
+			"guildID": guildID,
+			"role":    role,
+		}).Info("Getting house for member with")
+
+		role, err := getRoleName(s, role, guildID)
+		if err != nil {
+			return "", err
+		}
+
 		if _, ok := housePoints[role]; ok {
-			return role
+			return role, nil
 		}
 	}
-	return ""
+	return "", errors.New("Role not found")
 }
 
 func canWeGivePoints(s *discordgo.Session,
@@ -90,7 +100,7 @@ func canWeGivePoints(s *discordgo.Session,
 	}
 
 	giverHouse := getHouseForMember(s, giver, guildID)
-	fmt.Printf("%s is a %s\n", giver.Nick, giverHouse)
+	log.Debug("%s is a %s\n", giver.Nick, giverHouse)
 
 	return true
 	// return giverHouse != receiverHouse
