@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -53,11 +52,9 @@ func getRoleName(s *discordgo.Session, roleId string, guildID string) (string, e
 		return rolesMap[guildID][roleId], nil
 	}
 
-	fmt.Println(guildID)
-
 	guildRoles, err := s.GuildRoles(guildID)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return "", err
 	}
 
@@ -74,14 +71,15 @@ func getHouseForMember(s *discordgo.Session, member *discordgo.Member, guildID s
 		log.WithFields(log.Fields{
 			"guildID": guildID,
 			"role":    role,
-		}).Info("Getting house for member with")
+		}).Info("Getting house for member")
 
 		role, err := getRoleName(s, role, guildID)
 		if err != nil {
 			return "", err
 		}
 
-		if _, ok := housePoints[role]; ok {
+		houses := GetHouseMap()
+		if _, ok := houses[role]; ok {
 			return role, nil
 		}
 	}
@@ -99,36 +97,35 @@ func canWeGivePoints(s *discordgo.Session,
 		// return false
 	}
 
-	giverHouse := getHouseForMember(s, giver, guildID)
-	log.Debug("%s is a %s\n", giver.Nick, giverHouse)
+	_, _ = getHouseForMember(s, giver, guildID)
 
 	return true
 	// return giverHouse != receiverHouse
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	fmt.Println("--------------------------------------------------")
-	fmt.Println(m.Content)
+	log.WithFields(log.Fields{
+		"author":  m.Author,
+		"content": m.Content,
+	})
 	if len(m.Mentions) == 0 {
-		fmt.Println("No mentions, return early")
+		log.Info("No mentions, return early")
 		return
 	}
 	if !strings.Contains(m.Content, "++") {
-		fmt.Println("Didn't plus plus, return early")
+		log.Info("Didn't plus plus, return early")
 		return
 	}
 
-	fmt.Println(m.Author)
 	channel, _ := s.Channel(m.ChannelID)
 	guildID := channel.GuildID
 	giver, _ := s.GuildMember(guildID, m.Author.ID)
 	receiver, _ := s.GuildMember(guildID, m.Mentions[0].ID)
 
-	receiverHouse := getHouseForMember(s, receiver, guildID)
-	fmt.Printf("%s is a %s\n", receiver.Nick, receiverHouse)
+	receiverHouse, _ := getHouseForMember(s, receiver, guildID)
 
 	if !canWeGivePoints(s, giver, receiver, receiverHouse, guildID) {
-		fmt.Println("cannot give points")
+		log.Info("Cannot give points return early")
 		return
 	}
 	addPoints(m.Mentions[0].ID, guildID, receiverHouse)
