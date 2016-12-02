@@ -10,23 +10,27 @@ type HousePoint struct {
 	NumPoints string `json:"num_points"`
 }
 
-func addPoints(userId string, guildID string, house string) {
+func addPoints(userId string, guildID string, house string) error {
 	houseMap := GetHouseMap()
 	if _, ok := houseMap[house]; !ok {
 		log.WithFields(log.Fields{
 			"house": house,
 		}).Warn("Invalid house")
-		return
+		return nil
 	}
-	db := GetDB()
 
-	_, err := db.Exec(`INSERT INTO users (user_id, guild_id, house, num_points) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE num_points = num_points + 10, house = ?`, userId, guildID, house, 10, house)
+	db := GetDB()
+	_, err := db.Exec(
+		`INSERT INTO users (user_id, guild_id, house, num_points) VALUES (?,?,?,?)
+		ON DUPLICATE KEY UPDATE num_points = num_points + 10, house = ?`,
+		userId, guildID, house, 10, house,
+	)
 	if err != nil {
-		log.Error(err)
-		return
+		return err
 	}
 
 	getHouseStandings(guildID)
+	return nil
 }
 
 func getPointsForUser(userId string, guildID string) {
