@@ -4,7 +4,9 @@ import "github.com/mattgerstman/discordgo"
 
 var rolesMap = make(map[string]GuildRoles)
 
-// Gets the name of a role.
+/**
+ * Gets the name of a role.
+ */
 func GetRoleName(
 	s *discordgo.Session,
 	roleId string,

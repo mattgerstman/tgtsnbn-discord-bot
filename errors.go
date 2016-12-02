@@ -18,7 +18,9 @@ type ApplicationError struct {
 	Type    string
 }
 
-// Converts an error to an Application Error with a user facing message.
+/*
+ * Converts an error to an Application Error with a user facing message.
+ */
 func NewApplicationError(
 	Message string, Error error, Type string,
 ) *ApplicationError {
@@ -29,7 +31,9 @@ func NewApplicationError(
 	}
 }
 
-// Shorthand for making a new application error without an actual error.
+/*
+ * Shorthand for making a new application error without an actual error.
+ */
 func NewApplicationErrorWithoutError(
 	Message string, Type string,
 ) *ApplicationError {

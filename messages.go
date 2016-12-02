@@ -10,7 +10,9 @@ import (
 
 type GuildRoles map[string]string
 
-// Listener when a message is sent on discord.
+/*
+ * Listener when a message is sent on discord.
+ */
 func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	log.WithFields(log.Fields{
 		"content":  m.Content,

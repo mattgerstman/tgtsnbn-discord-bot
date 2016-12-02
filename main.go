@@ -11,7 +11,7 @@ func main() {
 
 	// Initialize the database.
 	log.Info("Connecting to database...")
-	InitDB()
+	GetDB()
 	log.Info("Connected to database")
 
 	// Load the config.

@@ -7,23 +7,27 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
+var internalDB *sql.DB
 
-func InitDB() *sql.DB {
-	if db != nil {
-		return db
+/**
+ * Returns a pointer to the database.
+ * Initializes the database if necessary.
+ */
+func GetDB() *sql.DB {
+	if internalDB != nil {
+		return internalDB
 	}
 
 	var err error
-	db, err = sql.Open("mysql", "root:@/hogwarts")
+	internalDB, err = sql.Open("mysql", "root:@/hogwarts")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Sanity check that the db is up. If it's not quit.
-	err = db.Ping()
+	// Sanity check that the internalDB is up. If it's not quit.
+	err = internalDB.Ping()
 	if err != nil {
 		log.Fatal(err)
 	}
-	return db
+	return internalDB
 }

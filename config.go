@@ -13,7 +13,9 @@ type Configuration struct {
 
 var config *Configuration
 
-// Loads config variables from file into global Config struct
+/**
+ * Loads config variables from file into Config struct.
+ */
 func loadConfig() {
 	file, err := os.Open("config.json")
 	if err != nil {
@@ -26,14 +28,12 @@ func loadConfig() {
 	}
 }
 
+/**
+ * Gets config struct. Initializes it if necessary.
+ */
 func GetConfig() *Configuration {
 	if config == nil {
 		loadConfig()
 	}
 	return config
-}
-
-func GetHouseMap() map[string]bool {
-	config := GetConfig()
-	return config.Houses
 }

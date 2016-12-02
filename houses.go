@@ -5,7 +5,17 @@ import (
 	"github.com/mattgerstman/discordgo"
 )
 
-// Gets a member's roles and figure's out which one is their house.
+/**
+ * Gets a map of house names to if we're allowed to give them points.
+ */
+func GetHouseMap() map[string]bool {
+	config := GetConfig()
+	return config.Houses
+}
+
+/*
+ * Gets a member's roles and figure's out which one is their house.
+ */
 func GetHouseForMember(
 	s *discordgo.Session,
 	member *discordgo.Member,
