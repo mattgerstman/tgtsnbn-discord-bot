@@ -10,36 +10,48 @@ type HousePoint struct {
 	NumPoints string `json:"num_points"`
 }
 
-func addPoints(userId string, guildID string, house string) error {
+func canWeGivePoints(
+	giverID string,
+	giverHouse string,
+	receiverID string,
+	receiverHouse string,
+) bool {
+
+	if giverID == receiverID {
+		// return false
+	}
+
+	return true
+	// return giverHouse != receiverHouse
+}
+
+func addPoints(userID string, guildID string, house string) *ApplicationError {
 	houseMap := GetHouseMap()
 	if _, ok := houseMap[house]; !ok {
 		log.WithFields(log.Fields{
 			"house": house,
 		}).Warn("Invalid house")
-		return nil
+		return NewApplicationErrorWithoutError("Invalid House", ErrorInvalidHouse)
 	}
 
-	db := GetDB()
 	_, err := db.Exec(
 		`INSERT INTO users (user_id, guild_id, house, num_points) VALUES (?,?,?,?)
 		ON DUPLICATE KEY UPDATE num_points = num_points + 10, house = ?`,
-		userId, guildID, house, 10, house,
+		userID, guildID, house, 10, house,
 	)
 	if err != nil {
-		return err
+		return NewApplicationError("Error adding points", err, ErrorDatabase)
 	}
 
 	getHouseStandings(guildID)
 	return nil
 }
 
-func getPointsForUser(userId string, guildID string) {
-
+func getPointsForUser(userID string, guildID string) {
+	db.QueryRow(`SELECT num_points FROM users WHERE user_id = ? AND guild_id = ?`, userID, guildID)
 }
 
 func getHouseStandings(guildID string) []HousePoint {
-	db := GetDB()
-
 	housePoints := make([]HousePoint, 0)
 
 	rows, err := db.Query(`SELECT house, SUM(num_points) as num_points FROM users WHERE guild_id = ? GROUP BY house ORDER BY num_points DESC`, guildID)
@@ -49,7 +61,6 @@ func getHouseStandings(guildID string) []HousePoint {
 	}
 
 	for rows.Next() {
-
 		var housePoint HousePoint
 		rows.Scan(&housePoint.House, &housePoint.NumPoints)
 		log.WithFields(log.Fields{

@@ -9,7 +9,7 @@ import (
 
 var db *sql.DB
 
-func GetDB() *sql.DB {
+func initDB() *sql.DB {
 	if db != nil {
 		return db
 	}
@@ -20,6 +20,7 @@ func GetDB() *sql.DB {
 		log.Fatal(err)
 	}
 
+	// Sanity check that the db is up. If it's not quit.
 	err = db.Ping()
 	if err != nil {
 		log.Fatal(err)
