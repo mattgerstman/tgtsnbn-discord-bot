@@ -7,9 +7,8 @@ import (
 )
 
 type Configuration struct {
-	Username string          `json:"username"`
-	Password string          `json:"password"`
-	Houses   map[string]bool `json:"houses"`
+	DiscordToken string          `json:"discord_token"`
+	Houses       map[string]bool `json:"houses"`
 }
 
 var config *Configuration

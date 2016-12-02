@@ -6,6 +6,8 @@ import "errors"
 const (
 	ErrorDatabase     = "ErrorDatabase"
 	ErrorInvalidHouse = "ErrorInvalidHouse"
+	ErrorRoleNotFound = "ErrorRoleNotFound"
+	ErrorFetchRoles   = "ErrorFetchRoles"
 )
 
 // ApplicationError contains information about errors

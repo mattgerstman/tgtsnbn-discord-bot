@@ -1,6 +1,5 @@
 {
-	"username": "",
-	"password": "",
+	"discord_token": "",
 	"houses": {
 		"Slytherin":  true,
 		"Gryffindor": true,

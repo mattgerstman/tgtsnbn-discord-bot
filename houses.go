@@ -1,28 +1,31 @@
 package main
 
 import (
-	"errors"
-
 	log "github.com/Sirupsen/logrus"
 	"github.com/mattgerstman/discordgo"
 )
 
-func getHouseForMember(s *discordgo.Session, member *discordgo.Member, guildID string) (string, error) {
+// Gets a member's roles and figure's out which one is their house.
+func GetHouseForMember(
+	s *discordgo.Session,
+	member *discordgo.Member,
+	guildID string,
+) (string, *ApplicationError) {
 	for _, role := range member.Roles {
 		log.WithFields(log.Fields{
 			"guildID": guildID,
 			"role":    role,
 		}).Info("Getting house for member")
 
-		role, err := getRoleName(s, role, guildID)
-		if err != nil {
-			return "", err
+		roleName, appErr := GetRoleName(s, role, guildID)
+		if appErr != nil {
+			return "", appErr
 		}
 
 		houses := GetHouseMap()
-		if _, ok := houses[role]; ok {
-			return role, nil
+		if _, ok := houses[roleName]; ok {
+			return roleName, nil
 		}
 	}
-	return "", errors.New("Role not found")
+	return "", NewApplicationErrorWithoutError("Role not found", ErrorRoleNotFound)
 }

@@ -11,7 +11,7 @@ func main() {
 
 	// Initialize the database.
 	log.Info("Connecting to database...")
-	initDB()
+	InitDB()
 	log.Info("Connected to database")
 
 	// Load the config.
@@ -21,7 +21,7 @@ func main() {
 
 	log.Info("Connecting to Discord...")
 	// Log into discord.
-	discord, err := discordgo.New(config.Username, config.Password)
+	discord, err := discordgo.New(config.DiscordToken)
 	if err != nil {
 		log.Fatal("Failed to connect to discord ", err)
 	}
@@ -29,11 +29,11 @@ func main() {
 	header := http.Header{}
 	header.Add("accept-encoding", "zlib")
 
-	// Register messageCreate as a callback for the messageCreate events.
-	discord.AddHandler(messageCreate)
+	// Register MessageCreate as a callback for the messageCreate events.
+	discord.AddHandler(MessageCreate)
 
 	// Register ready as a callback for the ready events.
-	discord.AddHandler(ready)
+	discord.AddHandler(Ready)
 
 	// Open the websocket and begin listening.
 	err = discord.Open()
@@ -46,6 +46,6 @@ func main() {
 
 }
 
-func ready(s *discordgo.Session, event *discordgo.Ready) {
+func Ready(s *discordgo.Session, event *discordgo.Ready) {
 	log.Info("TGTSNBN Discord Bot is now running. Press CTRL-C to exit.")
 }

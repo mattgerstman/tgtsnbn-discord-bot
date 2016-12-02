@@ -10,22 +10,7 @@ type HousePoint struct {
 	NumPoints string `json:"num_points"`
 }
 
-func canWeGivePoints(
-	giverID string,
-	giverHouse string,
-	receiverID string,
-	receiverHouse string,
-) bool {
-
-	if giverID == receiverID {
-		// return false
-	}
-
-	return true
-	// return giverHouse != receiverHouse
-}
-
-func addPoints(userID string, guildID string, house string) *ApplicationError {
+func AddPoints(userID string, guildID string, house string) *ApplicationError {
 	houseMap := GetHouseMap()
 	if _, ok := houseMap[house]; !ok {
 		log.WithFields(log.Fields{
@@ -43,15 +28,28 @@ func addPoints(userID string, guildID string, house string) *ApplicationError {
 		return NewApplicationError("Error adding points", err, ErrorDatabase)
 	}
 
-	getHouseStandings(guildID)
+	GetHouseStandings(guildID)
 	return nil
 }
 
-func getPointsForUser(userID string, guildID string) {
-	db.QueryRow(`SELECT num_points FROM users WHERE user_id = ? AND guild_id = ?`, userID, guildID)
+func GetPointsForUser(
+	userID string,
+	guildID string,
+) (numPoints int, appErr *ApplicationError) {
+	err := db.QueryRow(
+		`SELECT num_points FROM users WHERE user_id = ? AND guild_id = ?`,
+		userID,
+		guildID,
+	).Scan(&numPoints)
+
+	if err != nil {
+		return 0,
+			NewApplicationError("Error fetching points for user", err, ErrorDatabase)
+	}
+	return numPoints, nil
 }
 
-func getHouseStandings(guildID string) []HousePoint {
+func GetHouseStandings(guildID string) []HousePoint {
 	housePoints := make([]HousePoint, 0)
 
 	rows, err := db.Query(`SELECT house, SUM(num_points) as num_points FROM users WHERE guild_id = ? GROUP BY house ORDER BY num_points DESC`, guildID)
@@ -71,4 +69,18 @@ func getHouseStandings(guildID string) []HousePoint {
 	}
 
 	return housePoints
+}
+
+func GetPointsForHouse(house string, guildID string) (numPoints int, appErr *ApplicationError) {
+	err := db.QueryRow(
+		`SELECT SUM(num_points) FROM users WHERE house = ? AND guild_id = ?`,
+		house,
+		guildID,
+	).Scan(&numPoints)
+
+	if err != nil {
+		return 0,
+			NewApplicationError("Error fetching points for house", err, ErrorDatabase)
+	}
+	return numPoints, nil
 }

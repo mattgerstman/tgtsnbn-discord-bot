@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
@@ -9,14 +10,17 @@ import (
 
 type GuildRoles map[string]string
 
-var rolesMap = make(map[string]GuildRoles)
-
 // Listener when a message is sent on discord.
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	log.WithFields(log.Fields{
 		"content":  m.Content,
 		"username": m.Author.Username,
 	}).Info("Message received.")
+
+	if m.Author.Bot {
+		log.Info("Author is a bot, return early")
+		return
+	}
 
 	if len(m.Mentions) == 0 {
 		log.Info("No mentions, return early")
@@ -37,9 +41,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if err != nil {
 		log.Error("Unable to fetch giver from discord. ", err)
 	}
-	giverHouse, err := getHouseForMember(s, giver, guildID)
-	if err != nil {
-		log.Error("Unable to fetch house for giver from discord. ", err)
+	giverHouse, appErr := GetHouseForMember(s, giver, guildID)
+	if appErr != nil {
+		log.Error("Unable to fetch house for giver from discord. ", appErr)
 	}
 
 	receiver, err := s.GuildMember(guildID, m.Mentions[0].ID)
@@ -47,22 +51,54 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		log.Error("Unable to fetch receiver from discord. ", err)
 	}
 
-	receiverHouse, err := getHouseForMember(s, receiver, guildID)
-	if err != nil {
-		log.Error("Unable to fetch house for receiver from discord. ", err)
+	receiverHouse, appErr := GetHouseForMember(s, receiver, guildID)
+	if appErr != nil {
+		log.Error("Unable to fetch house for receiver from discord. ", appErr)
 	}
 
-	if !canWeGivePoints(
-		giver.User.ID,
-		giverHouse,
-		receiver.User.ID,
-		receiverHouse,
-	) {
-		log.Info("Cannot give points return early")
+	giverID := giver.User.ID
+	receiverID := receiver.User.ID
+	if giverID == receiverID {
+		log.Info("Receiver cannot be giver")
+		s.ChannelMessageSend(m.ChannelID, "Ten points to Dumbledore!")
 		return
 	}
 
-	addPoints(m.Mentions[0].ID, guildID, receiverHouse)
+	if giverHouse == receiverHouse {
+		log.Info("Cannot give points to members of their own house")
+		message := fmt.Sprintf(
+			"A %s would give points to another %s. Fifty points to Buckbeak.",
+			giverHouse,
+			giverHouse,
+		)
+		s.ChannelMessageSend(m.ChannelID, message)
+		return
+	}
 
-	s.ChannelMessageSend(m.ChannelID, "10 Points to Slytherin")
+	appErr = AddPoints(m.Mentions[0].ID, guildID, receiverHouse)
+	if appErr != nil {
+		log.Error("Error adding points ", appErr)
+	}
+
+	userPoints, appErr := GetPointsForUser(receiverID, guildID)
+	if appErr != nil {
+		log.Error("Error getting user points ", appErr)
+	}
+
+	housePoints, appErr := GetPointsForHouse(receiverHouse, guildID)
+	if appErr != nil {
+		log.Error("Error getting house points ", appErr)
+	}
+
+	receiverName := GetNameForMember(receiver)
+	response := fmt.Sprintf(
+		"Ten points to %s in %s. %s now has %d points. %s now has %d points.",
+		receiverName,
+		receiverHouse,
+		receiverName,
+		userPoints,
+		receiverHouse,
+		housePoints,
+	)
+	s.ChannelMessageSend(m.ChannelID, response)
 }
