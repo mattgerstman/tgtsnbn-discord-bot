@@ -26,6 +26,9 @@ func loadConfig() {
 	if err != nil {
 		log.Fatal("Failed to decode config with message: ", err)
 	}
+
+	// Read this from the environment.
+	config.DiscordToken = os.Getenv("DISCORD_TOKEN")
 }
 
 /**

@@ -53,7 +53,5 @@ Temporary Items
 .apdisk
 
 
-# Actual config file.
-config.json
 # Binary
 tgtsnbn-discord-bot

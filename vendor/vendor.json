@@ -1,7 +1,6 @@
 {
-	"goVersion": "go1.7",
-	"rootPath": "GitHub.com/mattgerstman/tgtsnbn-discord-bot",
 	"comment": "",
+	"goVersion": "go1.7",
 	"ignore": "test",
 	"package": [
 		{
@@ -11,16 +10,22 @@
 			"revisionTime": "2016-11-28T22:57:24Z"
 		},
 		{
-			"checksumSHA1": "3VxOGKjCTa9YsDR+2Ie+VDlEN9I=",
-			"path": "github.com/go-sql-driver/mysql",
-			"revision": "abfd04d323c28c5c5683c2beb877fae36491d5a8",
-			"revisionTime": "2016-11-27T07:18:00Z"
-		},
-		{
 			"checksumSHA1": "6l/wX/T8WQ/aDBY3qDlD+DxhrAM=",
 			"path": "github.com/gorilla/websocket",
 			"revision": "00ae02c5f519724d30cd51a909ec3bf5edd46aa6",
 			"revisionTime": "2015-10-06T20:46:28Z"
+		},
+		{
+			"checksumSHA1": "7CrjIM1kyo7WdVZzLYrJ7iIYbvQ=",
+			"path": "github.com/lib/pq",
+			"revision": "ae7391529ced9c12f06bf01eae33dadb4c70e49f",
+			"revisionTime": "2014-06-19T19:18:35Z"
+		},
+		{
+			"checksumSHA1": "+szf9XFd9UdUG6RdpXWRJK0jryo=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "ae7391529ced9c12f06bf01eae33dadb4c70e49f",
+			"revisionTime": "2014-06-19T19:18:35Z"
 		},
 		{
 			"checksumSHA1": "fDCxdQWQhgQf2DdentvwUIUAhck=",
@@ -46,5 +51,6 @@
 			"revision": "c57d4a71915a248dbad846d60825145062b4c18e",
 			"revisionTime": "2015-03-26T12:36:50Z"
 		}
-	]
+	],
+	"rootPath": "GitHub.com/mattgerstman/tgtsnbn-discord-bot"
 }
