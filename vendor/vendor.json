@@ -1,4 +1,6 @@
 {
+	"goVersion": "go1.7",
+	"rootPath": "GitHub.com/mattgerstman/tgtsnbn-discord-bot",
 	"comment": "",
 	"ignore": "test",
 	"package": [
@@ -44,6 +46,5 @@
 			"revision": "c57d4a71915a248dbad846d60825145062b4c18e",
 			"revisionTime": "2015-03-26T12:36:50Z"
 		}
-	],
-	"rootPath": "GitHub.com/mattgerstman/tgtsnbn-discord-bot"
+	]
 }
