@@ -24,9 +24,12 @@ func AddPoints(userID string, guildID string, house string) *ApplicationError {
 
 	db := GetDB()
 	_, err := db.Exec(
-		`INSERT INTO users (user_id, guild_id, house, num_points) VALUES (?,?,?,?)
-		ON DUPLICATE KEY UPDATE num_points = num_points + 10, house = ?`,
-		userID, guildID, house, 10, house,
+		`INSERT INTO users (user_id, guild_id, house, num_points)
+		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (user_id, guild_id)
+		DO UPDATE SET num_points = users.num_points + $4, house = $3
+		WHERE users.user_id = $1 AND users.guild_id = $2`,
+		userID, guildID, house, 10,
 	)
 	if err != nil {
 		return NewApplicationError("Error adding points", err, ErrorDatabase)
@@ -45,7 +48,7 @@ func GetPointsForUser(
 ) (numPoints int, appErr *ApplicationError) {
 	db := GetDB()
 	err := db.QueryRow(
-		`SELECT num_points FROM users WHERE user_id = ? AND guild_id = ?`,
+		`SELECT num_points FROM users WHERE user_id = $1 AND guild_id = $2`,
 		userID,
 		guildID,
 	).Scan(&numPoints)
@@ -64,7 +67,7 @@ func GetHouseStandings(guildID string) []HousePoint {
 	housePoints := make([]HousePoint, 0)
 
 	db := GetDB()
-	rows, err := db.Query(`SELECT house, SUM(num_points) as num_points FROM users WHERE guild_id = ? GROUP BY house ORDER BY num_points DESC`, guildID)
+	rows, err := db.Query(`SELECT house, SUM(num_points) as num_points FROM users WHERE guild_id = $1 GROUP BY house ORDER BY num_points DESC`, guildID)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -89,7 +92,7 @@ func GetHouseStandings(guildID string) []HousePoint {
 func GetPointsForHouse(house string, guildID string) (numPoints int, appErr *ApplicationError) {
 	db := GetDB()
 	err := db.QueryRow(
-		`SELECT SUM(num_points) FROM users WHERE house = ? AND guild_id = ?`,
+		`SELECT SUM(num_points) FROM users WHERE house = $1 AND guild_id = $2`,
 		house,
 		guildID,
 	).Scan(&numPoints)

@@ -19,7 +19,7 @@ func GetDB() *sql.DB {
 	}
 
 	var err error
-	internalDB, err = sql.Open("mysql", "root:@/hogwarts")
+	internalDB, err = sql.Open("postgres", "postgres://localhost/hogwarts?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
