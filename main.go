@@ -8,16 +8,15 @@ import (
 )
 
 func main() {
+	// Load the config.
+	log.Info("Loading config file...")
+	config := GetConfig()
+	log.Info("Loaded config file")
 
 	// Initialize the database.
 	log.Info("Connecting to database...")
 	GetDB()
 	log.Info("Connected to database")
-
-	// Load the config.
-	log.Info("Loading config file...")
-	config := GetConfig()
-	log.Info("Loaded config file")
 
 	log.Info("Connecting to Discord...")
 	// Log into discord.

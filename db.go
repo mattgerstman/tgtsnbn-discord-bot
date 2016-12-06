@@ -18,8 +18,10 @@ func GetDB() *sql.DB {
 		return internalDB
 	}
 
+	config := GetConfig()
+
 	var err error
-	internalDB, err = sql.Open("postgres", "postgres://localhost/hogwarts?sslmode=disable")
+	internalDB, err = sql.Open("postgres", config.DatabaseURL)
 	if err != nil {
 		log.Fatal(err)
 	}

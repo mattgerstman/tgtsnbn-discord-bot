@@ -52,6 +52,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+#External Assets
+vendor/*/
 
 # Binary
 tgtsnbn-discord-bot
+run_local.sh

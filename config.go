@@ -7,6 +7,7 @@ import (
 )
 
 type Configuration struct {
+	DatabaseURL  string          `json:"database_url"`
 	DiscordToken string          `json:"discord_token"`
 	Houses       map[string]bool `json:"houses"`
 }
@@ -28,6 +29,7 @@ func loadConfig() {
 	}
 
 	// Read this from the environment.
+	config.DatabaseURL = os.Getenv("DATABASE_URL")
 	config.DiscordToken = os.Getenv("DISCORD_TOKEN")
 }
 
