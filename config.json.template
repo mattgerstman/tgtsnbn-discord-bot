@@ -1,0 +1,9 @@
+{
+	"bot_id": "",
+	"houses": {
+		"Slytherin":  true,
+		"Gryffindor": true,
+		"Hufflepuff": true,
+		"Ravenclaw":  true
+	}
+}

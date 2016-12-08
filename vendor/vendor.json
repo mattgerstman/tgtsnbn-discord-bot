@@ -1,0 +1,56 @@
+{
+	"comment": "",
+	"goVersion": "go1.7",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "jRtYpPa7CRuA+LP4ELF9c9CjJao=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "e400ff7861bce9661cf37c162ce3b7b303baf333",
+			"revisionTime": "2016-11-28T22:57:24Z"
+		},
+		{
+			"checksumSHA1": "6l/wX/T8WQ/aDBY3qDlD+DxhrAM=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "00ae02c5f519724d30cd51a909ec3bf5edd46aa6",
+			"revisionTime": "2015-10-06T20:46:28Z"
+		},
+		{
+			"checksumSHA1": "7CrjIM1kyo7WdVZzLYrJ7iIYbvQ=",
+			"path": "github.com/lib/pq",
+			"revision": "ae7391529ced9c12f06bf01eae33dadb4c70e49f",
+			"revisionTime": "2014-06-19T19:18:35Z"
+		},
+		{
+			"checksumSHA1": "+szf9XFd9UdUG6RdpXWRJK0jryo=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "ae7391529ced9c12f06bf01eae33dadb4c70e49f",
+			"revisionTime": "2014-06-19T19:18:35Z"
+		},
+		{
+			"checksumSHA1": "fDCxdQWQhgQf2DdentvwUIUAhck=",
+			"path": "github.com/mattgerstman/discordgo",
+			"revision": "c75163ef43c2eecddc04e00b25b93bd31ca38913",
+			"revisionTime": "2016-11-28T03:20:09Z"
+		},
+		{
+			"checksumSHA1": "UxdMiKUm6Ajczi6BRNkrPvoAPWQ=",
+			"path": "golang.org/x/crypto/nacl/secretbox",
+			"revision": "c57d4a71915a248dbad846d60825145062b4c18e",
+			"revisionTime": "2015-03-26T12:36:50Z"
+		},
+		{
+			"checksumSHA1": "+4ElGgut95P0GmZfS7AsBK6mXLM=",
+			"path": "golang.org/x/crypto/poly1305",
+			"revision": "c57d4a71915a248dbad846d60825145062b4c18e",
+			"revisionTime": "2015-03-26T12:36:50Z"
+		},
+		{
+			"checksumSHA1": "rpD48Mn9nOFgc5UnDjAHAodxHo4=",
+			"path": "golang.org/x/crypto/salsa20/salsa",
+			"revision": "c57d4a71915a248dbad846d60825145062b4c18e",
+			"revisionTime": "2015-03-26T12:36:50Z"
+		}
+	],
+	"rootPath": "GitHub.com/mattgerstman/tgtsnbn-discord-bot"
+}
