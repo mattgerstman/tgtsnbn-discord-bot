@@ -5,11 +5,6 @@ import log "github.com/Sirupsen/logrus"
 type Users struct {
 }
 
-type HousePoint struct {
-	House     string `json:"house"`
-	NumPoints string `json:"num_points"`
-}
-
 /**
  * Adds points to a user/house, persists to database.
  */
@@ -35,7 +30,6 @@ func AddPoints(userID string, guildID string, house string) *ApplicationError {
 		return NewApplicationError("Error adding points", err, ErrorDatabase)
 	}
 
-	GetHouseStandings(guildID)
 	return nil
 }
 
@@ -60,17 +54,29 @@ func GetPointsForUser(
 	return numPoints, nil
 }
 
+type HousePoint struct {
+	House     string `json:"house"`
+	NumPoints string `json:"num_points"`
+}
+
 /**
  * Returns a list of all house standings.
  */
-func GetHouseStandings(guildID string) []HousePoint {
+func GetHouseLeaderboard(guildID string) ([]HousePoint, *ApplicationError) {
 	housePoints := make([]HousePoint, 0)
 
 	db := GetDB()
-	rows, err := db.Query(`SELECT house, SUM(num_points) as num_points FROM users WHERE guild_id = $1 GROUP BY house ORDER BY num_points DESC`, guildID)
+	rows, err := db.Query(
+		`SELECT house, SUM(num_points) as num_points FROM users WHERE guild_id = $1
+		GROUP BY house ORDER BY num_points DESC`,
+		guildID,
+	)
 	if err != nil {
-		log.Error(err)
-		return nil
+		return nil, NewApplicationError(
+			"Unable to fetch house points from db",
+			err,
+			ErrorDatabase,
+		)
 	}
 
 	for rows.Next() {
@@ -83,7 +89,7 @@ func GetHouseStandings(guildID string) []HousePoint {
 		housePoints = append(housePoints, housePoint)
 	}
 
-	return housePoints
+	return housePoints, nil
 }
 
 /**

@@ -58,3 +58,6 @@ vendor/*/
 # Binary
 tgtsnbn-discord-bot
 run_local.sh
+
+# Config
+config.json

@@ -7,6 +7,7 @@ import (
 )
 
 type Configuration struct {
+	BotId        string          `json:"bot_id"`
 	DatabaseURL  string          `json:"database_url"`
 	DiscordToken string          `json:"discord_token"`
 	Houses       map[string]bool `json:"houses"`
